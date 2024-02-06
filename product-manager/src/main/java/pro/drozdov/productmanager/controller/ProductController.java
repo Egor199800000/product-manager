@@ -10,6 +10,7 @@ import pro.drozdov.productmanager.service.ProductService;
 import java.util.List;
 
 @RestController
+@RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -20,17 +21,17 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<Product> create(@RequestBody ProductDTO dto){
-        return new ResponseEntity<>(productService.create(dto), HttpStatus.OK);
+        return mappingResponseProduct(productService.create(dto));
     }
 
     @GetMapping
     public ResponseEntity<List<Product>> readAll(){
-        return new ResponseEntity<>(productService.readAll(),HttpStatus.OK);
+        return mappingResponseListProduct(productService.readAll());
     }
 
     @PutMapping
     public ResponseEntity<Product> update(@RequestBody Product product){
-        return new ResponseEntity<>(productService.update(product),HttpStatus.OK);
+        return mappingResponseProduct(product);
     }
 
     @DeleteMapping("/{id}")
@@ -39,6 +40,20 @@ public class ProductController {
         return HttpStatus.OK;
     }
 
+    @GetMapping("/category/{id}")
+    public ResponseEntity<List<Product>> readByCategoryId(@PathVariable Long id){
+        return mappingResponseListProduct(productService.readByCategoryId(id));
+    }
 
+
+
+
+    private ResponseEntity<Product> mappingResponseProduct(Product product){
+        return new ResponseEntity<>(product,HttpStatus.OK);
+    }
+
+    private ResponseEntity<List<Product>> mappingResponseListProduct(List<Product> products){
+        return new ResponseEntity<>(products,HttpStatus.OK);
+    }
 
 }

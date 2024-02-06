@@ -11,14 +11,19 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    private final CategoryService categoryService;
+
+    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
         this.productRepository = productRepository;
+        this.categoryService = categoryService;
     }
+
 
     public Product create(ProductDTO dto){
         return productRepository.save(Product.builder()
                 .name(dto.getName())
                 .amount(dto.getAmount())
+                .category(categoryService.readById(dto.getCategoryId()))
                 .build());
     }
 
@@ -32,6 +37,10 @@ public class ProductService {
 
     public void delete(Long id){
          productRepository.deleteById(id);
+    }
+
+    public List<Product> readByCategoryId(Long id){
+        return productRepository.findByCategoryId(id);
     }
 
 
