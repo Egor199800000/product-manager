@@ -7,6 +7,6 @@ import pro.drozdov.productmanager.entity.Product;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product,Long> {
+public interface ProductDao extends JpaRepository<Product,Long> {
     List<Product> findByCategoryId(Long id);
 }

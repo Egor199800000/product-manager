@@ -3,17 +3,17 @@ package pro.drozdov.productmanager.service;
 import org.springframework.stereotype.Service;
 import pro.drozdov.productmanager.dto.ProductDTO;
 import pro.drozdov.productmanager.entity.Product;
-import pro.drozdov.productmanager.repo.ProductRepository;
+import pro.drozdov.productmanager.repo.ProductDao;
 
 import java.util.List;
 
 @Service
 public class ProductService {
-    private final ProductRepository productRepository;
+    private final ProductDao productRepository;
 
     private final CategoryService categoryService;
 
-    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
+    public ProductService(ProductDao productRepository, CategoryService categoryService) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
     }
