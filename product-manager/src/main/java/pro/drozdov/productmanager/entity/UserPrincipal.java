@@ -6,30 +6,23 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
 
-public class SecurityUser implements UserDetails {
+public class UserPrincipal implements UserDetails {
 
     private final User user;
 
-    public SecurityUser(User user) {
+    public UserPrincipal(User user) {
         this.user = user;
     }
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        //ОШИБКА
-//        String roles=new String(String.valueOf(user.getRoles()));
-//        return Arrays
-//                .stream(roles.split(" "))
-//                .map(SimpleGrantedAuthority::new)
-//                .toList();
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-
-        for (Role role : user.getRoles()) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
-        return grantedAuthorities.stream().toList();
-
+        List<GrantedAuthority> authorities=new ArrayList<>();
+        this.user.getRoleList().forEach(r->{
+            GrantedAuthority authority=new SimpleGrantedAuthority("ROLE"+r);
+            authorities.add(authority);
+        });
+        return authorities;
     }
 
     @Override

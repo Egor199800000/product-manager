@@ -2,7 +2,10 @@ package pro.drozdov.productmanager.entity;
 
 import jakarta.persistence.*;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 @Entity
 @Table(name = "users")
@@ -21,10 +24,8 @@ public class User {
     @Transient
     private String confirmPassword;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+
+    private String roles;
 
     public Long getId() {
         return id;
@@ -58,14 +59,23 @@ public class User {
         this.confirmPassword = confirmPassword;
     }
 
-    public Set<Role> getRoles() {
+
+    public String getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(String roles) {
         this.roles = roles;
     }
-
+    //ПОЛУЧЕНИЕ СПИСКА РОЛЕЙ
+    public List<String> getRoleList(){
+        if(this.roles.length()>0){
+            System.out.println("User has roles: "+roles);
+            return Arrays.asList(this.roles.split(","));
+//Если есть какие то роли то преобразуем в список ролей
+        }
+        return new ArrayList<>();
+    }
 
     @Override
     public String toString() {
@@ -74,7 +84,7 @@ public class User {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", confirmPassword='" + confirmPassword + '\'' +
-                ", roles=" + roles +
+                ", roles='" + roles + '\'' +
                 '}';
     }
 }
