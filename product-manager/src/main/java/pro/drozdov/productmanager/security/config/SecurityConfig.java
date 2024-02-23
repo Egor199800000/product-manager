@@ -2,6 +2,8 @@ package pro.drozdov.productmanager.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import pro.drozdov.productmanager.service.JpaUserDetailsService;
 
 
 @Configuration
@@ -22,11 +25,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder){
-        UserDetails admin= User.builder().username("admin").password(encoder.encode("admin")).roles("ADMIN").build();
-        UserDetails user= User.builder().username("user").password(encoder.encode("user")).roles("USER").build();
-        UserDetails god= User.builder().username("god").password(encoder.encode("god")).roles("USER","ADMIN").build();
-        return new InMemoryUserDetailsManager(admin,user,god);
+    public UserDetailsService userDetailsService(){
+        return new JpaUserDetailsService();
     }
 
     @Bean
@@ -36,13 +36,20 @@ public class SecurityConfig {
 
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth.requestMatchers
-                        ("api/welcome").permitAll()//доступ к этой точке всем
+                        ("api/welcome","api/new-user").permitAll()//доступ к этой точке всем
                         .requestMatchers("api/**").authenticated())//только аутентифиц пользователи имеют доступ к api/user или к api/admin
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)//к форме логина имеют доступ все
                 .build();
     }
 
 
+    @Bean //аутентификационный провайдер используется для подтверждения личности пользователя
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
 
 
     @Bean

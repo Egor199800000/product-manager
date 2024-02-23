@@ -4,7 +4,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UserPrincipal implements UserDetails {
 
@@ -15,14 +17,11 @@ public class UserPrincipal implements UserDetails {
     }
 
 
-    @Override
+    @Override //сплитим строковое значение-роли на отдельные кусочки
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities=new ArrayList<>();
-        this.user.getRoleList().forEach(r->{
-            GrantedAuthority authority=new SimpleGrantedAuthority("ROLE"+r);
-            authorities.add(authority);
-        });
-        return authorities;
+return Arrays.stream(user.getRoles().split(", "))
+        .map(SimpleGrantedAuthority::new)
+        .collect(Collectors.toList());
     }
 
     @Override
