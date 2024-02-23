@@ -23,8 +23,10 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder encoder){
-        UserDetails admin= User.builder().username("admin").password(encoder.encode("admin")).build();
-        return new InMemoryUserDetailsManager(admin);
+        UserDetails admin= User.builder().username("admin").password(encoder.encode("admin")).roles("ADMIN").build();
+        UserDetails user= User.builder().username("user").password(encoder.encode("user")).roles("USER").build();
+        UserDetails god= User.builder().username("god").password(encoder.encode("god")).roles("USER","ADMIN").build();
+        return new InMemoryUserDetailsManager(admin,user,god);
     }
 
     @Bean
@@ -35,7 +37,7 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth.requestMatchers
                         ("api/welcome").permitAll()//доступ к этой точке всем
-                        .requestMatchers("api/**").authenticated())//только аутентифиц пользователи
+                        .requestMatchers("api/**").authenticated())//только аутентифиц пользователи имеют доступ к api/user или к api/admin
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)//к форме логина имеют доступ все
                 .build();
     }

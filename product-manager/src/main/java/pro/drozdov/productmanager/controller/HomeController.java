@@ -16,12 +16,14 @@ public class HomeController {
 
 
     @GetMapping("/user")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public String user() {
         return "Hello, User!";
     }
 
 
     @GetMapping("/admin")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String admin() {
         return "Hello, Admin!";
     }
